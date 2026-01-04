@@ -13,7 +13,7 @@ Students, Teachers, Fees, Gallery and Print Cards.
 
 ## 🔗 Live Demo
 (Your GitHub Pages link yahan paste karein)
-Example: https://YOUR-zamilojan78.github.io/schoolsoft-demo/
+Example: https://Muzammil-zamilojan78.github.io/schoolsoft-demo/
 
 ## ⬇️ Download / Access (Earning Link)
 - Link 1: https://shrinkme.click/nfS2TS
