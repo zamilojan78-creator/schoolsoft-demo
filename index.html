@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Al Mujahid Higher Secondary School</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family:'Roboto',sans-serif; margin:0; background:#f0f4f8; color:#333; }
+    header { background: linear-gradient(90deg,#0b5ed7,#0d6efd); color:#fff; padding:20px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.1); border-bottom-left-radius:15px; border-bottom-right-radius:15px;}
+    header h1{margin:5px 0;font-size:28px;}
+    header p{margin:3px 0;font-size:14px;}
+    nav{display:flex;justify-content:space-around;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,0.1);position:sticky;top:0;z-index:100;border-radius:10px; margin:10px;}
+    nav button{flex:1;padding:14px;border:none;background:#fff;cursor:pointer;font-weight:500;transition:0.3s;font-size:16px;border-radius:8px;}
+    nav button:hover, nav button.active{background:#e7f1ff;color:#0b5ed7;box-shadow:0 4px 8px rgba(0,0,0,0.1);}
+    section{display:none;padding:20px; animation:fadeIn 0.5s ease-in-out;}
+    section.active{display:block;}
+    @keyframes fadeIn{from{opacity:0; transform: translateY(10px);} to{opacity:1; transform:translateY(0);}}
+    h2{color:#0b5ed7;margin-bottom:15px;}
+    input,select,textarea{width:100%;padding:10px;margin:6px 0;border-radius:8px;border:1px solid #ccc;font-size:14px;transition:0.3s;}
+    input:focus, select:focus, textarea:focus{border-color:#0b5ed7; box-shadow:0 0 5px rgba(11,94,215,0.5);}
+    input.invalid{border-color:red;}
+    button.action{background:#0b5ed7;color:#fff;padding:12px;border:none;border-radius:8px;width:100%;margin-top:10px;cursor:pointer;font-size:16px;transition:0.3s;box-shadow:0 4px 8px rgba(0,0,0,0.1);}
+    button.action:hover{background:#0956b2; transform: translateY(-2px);}
+    button.printBtn{background:#28a745; margin-top:10px;}
+    button.editBtn{background:#ffc107;color:#000;margin:2px;padding:5px 10px;border-radius:5px;cursor:pointer;transition:0.3s;}
+    button.editBtn:hover{background:#e0a800;}
+    button.deleteBtn{background:#dc3545;color:#fff;margin:2px;padding:5px 10px;border-radius:5px;cursor:pointer;transition:0.3s;}
+    button.deleteBtn:hover{background:#b02a37;}
+    .card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 6px 15px rgba(0,0,0,0.08);text-align:center;transition:0.3s; margin-bottom:15px; position:relative;}
+    .card:hover{transform:translateY(-5px);box-shadow:0 8px 20px rgba(0,0,0,0.12);}
+    .card h3{margin:0;color:#0b5ed7;}
+    .card p{margin:5px 0 0 0;font-weight:500;}
+    .card img{width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid #0b5ed7; margin-bottom:10px;}
+    .card .card-buttons{margin-top:10px;}
+    .cards-container{display:flex;flex-wrap:wrap;gap:15px;}
+    .dashboard-folder{margin-top:20px;border-radius:10px; background:#e7f1ff; overflow:hidden;}
+    .dashboard-folder h3{margin:0; padding:10px 15px; cursor:pointer; user-select:none; display:flex; justify-content:space-between; align-items:center; color:#0b5ed7;}
+    .dashboard-folder h3:hover{background:#d0e4ff;}
+    .folder-content{display:flex; flex-wrap:wrap; gap:15px; padding:10px; background:#f9faff;}
+    .folder-content.collapsed{display:none;}
+    .folder-arrow{transition:0.3s;}
+    .folder-arrow.collapsed{transform:rotate(-90deg);}
+    footer{text-align:center;padding:15px;font-size:13px;color:#777;margin-top:20px;}
+    .preview{display:flex;gap:10px;margin-bottom:10px;}
+    .preview img{width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid #0b5ed7;}
+    .dashboard-cards{display:flex; flex-wrap:wrap; gap:15px;}
+    .dashboard-cards .card{flex:1 1 160px;}
+
+    @media print{
+      body *{visibility:hidden;}
+      #printAllContainer, #printAllContainer *{visibility:visible;}
+      #printAllContainer{position:absolute; left:0; top:0; width:100%; display:flex; flex-wrap:wrap; gap:15px; padding:10px;}
+      #printAllContainer .card{flex:0 0 calc(33.33% - 10px); page-break-inside: avoid; margin-bottom:15px;}
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Al Mujahid Higher Secondary School</h1>
+    <p>Address: Peeran Chowk, Jatoi, M. Garh</p>
+    <p>Director: Mujahid Hussain Maitla | Principal: Muzammil Kareem Malik</p>
+  </header>
+
+  <nav>
+    <button onclick="showSection('dashboard', event)" class="active">Dashboard</button>
+    <button onclick="showSection('students', event)">Students</button>
+    <button onclick="showSection('teachers', event)">Teachers</button>
+    <button onclick="showSection('fees', event)">Fees</button>
+    <button onclick="showSection('gallery', event)">Gallery</button>
+  </nav>
+
+  <section id="dashboard" class="active">
+    <h2>Dashboard</h2>
+    <div class="dashboard-cards">
+      <div class="card"><h3 id="studentCount">0</h3><p>Students</p></div>
+      <div class="card"><h3 id="teacherCount">0</h3><p>Teachers</p></div>
+      <div class="card"><h3 id="feeCount">0</h3><p>Fees Paid</p></div>
+      <div class="card"><h3 id="galleryCount">0</h3><p>Gallery</p></div>
+    </div>
+
+    <button class="action printBtn" onclick="printAllCards()">Print All Cards</button>
+    <div id="printAllContainer"></div>
+
+    <div class="dashboard-folder">
+      <h3 onclick="toggleFolder(this)">Students <span class="folder-arrow">▶</span></h3>
+      <div id="dashStudentCards" class="folder-content"></div>
+    </div>
+
+    <div class="dashboard-folder">
+      <h3 onclick="toggleFolder(this)">Teachers <span class="folder-arrow">▶</span></h3>
+      <div id="dashTeacherCards" class="folder-content"></div>
+    </div>
+
+    <div class="dashboard-folder">
+      <h3 onclick="toggleFolder(this)">Fees <span class="folder-arrow">▶</span></h3>
+      <div id="dashFeeCards" class="folder-content"></div>
+    </div>
+
+    <div class="dashboard-folder">
+      <h3 onclick="toggleFolder(this)">Gallery <span class="folder-arrow">▶</span></h3>
+      <div id="dashGallery" class="folder-content"></div>
+    </div>
+  </section>
+
+  <section id="students">
+    <h2>Student Management</h2>
+    <div class="preview" id="studentPreview"></div>
+    <input type="file" id="simage" accept="image/*" onchange="showPreview('simage','studentPreview')">
+    <input type="text" id="sname" placeholder="Student Name">
+    <input type="text" id="sphone" placeholder="Phone Number" maxlength="11" oninput="validatePhone(this)">
+    <select id="sclass">
+      <option value="">Select Class</option>
+      <option>Nursery</option><option>KG</option>
+      <option>1</option><option>2</option><option>3</option><option>4</option>
+      <option>5</option><option>6</option><option>7</option><option>8</option>
+      <option>9</option><option>10</option><option>11</option><option>12</option>
+    </select>
+    <button class="action" onclick="addStudent()">Add Student Card</button>
+    <div id="studentCards" class="cards-container"></div>
+  </section>
+
+  <section id="teachers">
+    <h2>Teacher Management</h2>
+    <div class="preview" id="teacherPreview"></div>
+    <input type="file" id="timage" accept="image/*" onchange="showPreview('timage','teacherPreview')">
+    <input type="text" id="tname" placeholder="Teacher Name">
+    <input type="text" id="tphone" placeholder="Phone Number" maxlength="11" oninput="validatePhone(this)">
+    <select id="tsubjectClass" multiple>
+      <option>Nursery</option><option>KG</option>
+      <option>1</option><option>2</option>
+      <option>3</option><option>4</option>
+      <option>5</option><option>6</option>
+      <option>7</option><option>8</option>
+      <option>9</option><option>10</option>
+      <option>11</option><option>12</option>
+    </select>
+    <input type="text" id="tsubject" placeholder="Subject">
+    <input type="text" id="tdesignation" placeholder="Designation">
+    <button class="action" onclick="addTeacher()">Add Teacher Card</button>
+    <div id="teacherCards" class="cards-container"></div>
+  </section>
+
+  <section id="fees">
+    <h2>Fee Management</h2>
+    <input type="text" id="fname" placeholder="Student Name">
+    <input type="number" id="famount" placeholder="Fee Amount">
+    <select id="fmonth">
+      <option>January</option><option>February</option><option>March</option><option>April</option>
+      <option>May</option><option>June</option><option>July</option><option>August</option>
+      <option>September</option><option>October</option><option>November</option>
+      <option>December</option>
+    </select>
+    <button class="action" onclick="addFee()">Add Fee Card</button>
+    <div id="feeCards" class="cards-container"></div>
+  </section>
+
+  <section id="gallery">
+    <h2>School Gallery</h2>
+    <div class="preview" id="galleryPreview"></div>
+    <input type="file" id="gimages" accept="image/*" multiple onchange="showGalleryPreview()">
+    <input type="text" id="gcaption" placeholder="Caption for selected images">
+    <button class="action" onclick="addGallery()">Add to Gallery</button>
+    <button class="action printBtn" onclick="printGallery()">Print Gallery</button>
+    <div id="galleryContainer" class="cards-container"></div>
+  </section>
+
+  <footer>Created by Muzammil Kareem Malik</footer>
+
+  <script>
+    function showSection(id,event){
+      document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+      if(event) event.currentTarget.classList.add('active');
+    }
+
+    function validatePhone(input){
+      input.value=input.value.replace(/\\D/g,'').slice(0,11);
+      input.classList.toggle('invalid', input.value.length!==11);
+    }
+
+    function toggleFolder(header){
+      const content=header.nextElementSibling;
+      content.classList.toggle('collapsed');
+      header.querySelector('.folder-arrow').classList.toggle('collapsed');
+    }
+
+    function showPreview(inputId,previewId){
+      let preview=document.getElementById(previewId); preview.innerHTML='';
+      let input=document.getElementById(inputId);
+      if(input.files[0]){
+        let reader=new FileReader();
+        reader.onload=e=>{
+          let img=document.createElement('img'); img.src=e.target.result; preview.appendChild(img);
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    function showGalleryPreview(){
+      const preview=document.getElementById('galleryPreview'); preview.innerHTML='';
+      const files=document.getElementById('gimages').files;
+      for(let i=0;i<files.length;i++){
+        const reader=new FileReader();
+        reader.onload=e=>{
+          const img=document.createElement('img'); img.src=e.target.result; preview.appendChild(img);
+        };
+        reader.readAsDataURL(files[i]);
+      }
+    }
+
+    function fileToDataURL(file){
+      return new Promise((resolve,reject)=>{
+        const r=new FileReader();
+        r.onload=()=>resolve(r.result);
+        r.onerror=reject;
+        r.readAsDataURL(file);
+      });
+    }
+
+    let students=[], teachers=[], fees=[], gallery=[];
+
+    function loadData(){
+      if(localStorage.students){ students=JSON.parse(localStorage.students); students.forEach(renderStudent); }
+      if(localStorage.teachers){ teachers=JSON.parse(localStorage.teachers); teachers.forEach(renderTeacher); }
+      if(localStorage.fees){ fees=JSON.parse(localStorage.fees); fees.forEach(renderFee); }
+      if(localStorage.gallery){ gallery=JSON.parse(localStorage.gallery); gallery.forEach(renderGallery); }
+      updateCounts();
+    }
+    window.onload=loadData;
+
+    function saveData(){
+      localStorage.setItem('students',JSON.stringify(students));
+      localStorage.setItem('teachers',JSON.stringify(teachers));
+      localStorage.setItem('fees',JSON.stringify(fees));
+      localStorage.setItem('gallery',JSON.stringify(gallery));
+    }
+
+    function updateCounts(){
+      document.getElementById('studentCount').innerText=students.length;
+      document.getElementById('teacherCount').innerText=teachers.length;
+      document.getElementById('feeCount').innerText=fees.length;
+      document.getElementById('galleryCount').innerText=gallery.length;
+      updatePrintContainer();
+    }
+
+    function createCard(data,type){
+      let card=document.createElement('div');
+      card.className='card';
+
+      const imgHtml = data.img ? `<img src="${data.img}" alt="">` : '';
+      let extra = '';
+      if(data.phone) extra += `<p>Phone: ${data.phone}</p>`;
+      if(type==='student') extra += `<p>Class: ${data.cls}</p>`;
+      if(type==='teacher') extra += `<p>Classes: ${data.classes}</p><p>Subject: ${data.subject}</p><p>Designation: ${data.designation}</p>`;
+      if(type==='fee') extra += `<p>Amount: ${data.amount}</p><p>Month: ${data.month}</p>`;
+      if(type==='gallery' && data.caption) extra += `<p>${data.caption}</p>`;
+
+      card.innerHTML = `
+        ${imgHtml}
+        <h3>${data.name || ''}</h3>
+        ${extra}
+        <div class="card-buttons">
+          <button class="editBtn" type="button">Edit</button>
+          <button class="deleteBtn" type="button">Delete</button>
+        </div>
+      `;
+
+      card.querySelector('.editBtn').onclick = () => alert('Edit feature can be added if you want.');
+      return card;
+    }
+
+    function renderStudent(data){
+      const main=createCard(data,'student');
+      const dash=createCard(data,'student');
+      main.querySelector('.deleteBtn').onclick=()=>deleteStudent(data.id);
+      dash.querySelector('.deleteBtn').onclick=()=>deleteStudent(data.id);
+      document.getElementById('studentCards').appendChild(main);
+      document.getElementById('dashStudentCards').appendChild(dash);
+    }
+    function renderTeacher(data){
+      const main=createCard(data,'teacher');
+      const dash=createCard(data,'teacher');
+      main.querySelector('.deleteBtn').onclick=()=>deleteTeacher(data.id);
+      dash.querySelector('.deleteBtn').onclick=()=>deleteTeacher(data.id);
+      document.getElementById('teacherCards').appendChild(main);
+      document.getElementById('dashTeacherCards').appendChild(dash);
+    }
+    function renderFee(data){
+      const main=createCard(data,'fee');
+      const dash=createCard(data,'fee');
+      main.querySelector('.deleteBtn').onclick=()=>deleteFee(data.id);
+      dash.querySelector('.deleteBtn').onclick=()=>deleteFee(data.id);
+      document.getElementById('feeCards').appendChild(main);
+      document.getElementById('dashFeeCards').appendChild(dash);
+    }
+    function renderGallery(data){
+      const main=createCard(data,'gallery');
+      const dash=createCard(data,'gallery');
+      main.querySelector('.deleteBtn').onclick=()=>deleteGallery(data.id);
+      dash.querySelector('.deleteBtn').onclick=()=>deleteGallery(data.id);
+      document.getElementById('galleryContainer').appendChild(main);
+      document.getElementById('dashGallery').appendChild(dash);
+    }
+
+    async function addStudent(){
+      let name=document.getElementById('sname').value.trim();
+      let phone=document.getElementById('sphone').value.trim();
+      let cls=document.getElementById('sclass').value;
+      const file = document.getElementById('simage').files[0];
+      let img = file ? await fileToDataURL(file) : '';
+      if(!name||!phone||!cls){alert('Fill all fields'); return;}
+      if(phone.length!==11){alert('Phone must be 11 digits'); return;}
+      let id=Date.now();
+      let student={id,name,phone,cls,img};
+      students.push(student);
+      saveData();
+      renderStudent(student);
+      updateCounts();
+
+      document.getElementById('sname').value='';
+      document.getElementById('sphone').value='';
+      document.getElementById('sclass').value='';
+      document.getElementById('simage').value='';
+      document.getElementById('studentPreview').innerHTML='';
+    }
+
+    function deleteStudent(id){
+      if(!confirm("Are you sure to delete this student?")) return;
+      students=students.filter(s=>s.id!==id);
+      saveData();
+      clearCards('student');
+      students.forEach(renderStudent);
+      updateCounts();
+    }
+
+    async function addTeacher(){
+      let name = document.getElementById('tname').value.trim();
+      let phone = document.getElementById('tphone').value.trim();
+      let classes = Array.from(document.getElementById('tsubjectClass').selectedOptions).map(o => o.value).join(', ');
+      let subject = document.getElementById('tsubject').value.trim();
+      let designation = document.getElementById('tdesignation').value.trim();
+      const file = document.getElementById('timage').files[0];
+      let img = file ? await fileToDataURL(file) : '';
+
+      if(!name || !phone || !classes || !subject || !designation){ alert('Fill all fields'); return; }
+      if(phone.length!==11){ alert('Phone must be 11 digits'); return; }
+
+      let id = Date.now();
+      let teacher = {id,name,phone,classes,subject,designation,img};
+      teachers.push(teacher);
+      saveData();
+      renderTeacher(teacher);
+      updateCounts();
+
+      document.getElementById('tname').value='';
+      document.getElementById('tphone').value='';
+      Array.from(document.getElementById('tsubjectClass').options).forEach(o=>o.selected=false);
+      document.getElementById('tsubject').value='';
+      document.getElementById('tdesignation').value='';
+      document.getElementById('timage').value='';
+      document.getElementById('teacherPreview').innerHTML='';
+    }
+
+    function deleteTeacher(id){
+      if(!confirm("Are you sure to delete this teacher?")) return;
+      teachers = teachers.filter(t => t.id!==id);
+      saveData();
+      clearCards('teacher');
+      teachers.forEach(renderTeacher);
+      updateCounts();
+    }
+
+    function addFee(){
+      let name = document.getElementById('fname').value.trim();
+      let amount = document.getElementById('famount').value.trim();
+      let month = document.getElementById('fmonth').value;
+      if(!name || !amount){ alert('Fill all fields'); return; }
+      let id = Date.now();
+      let fee = {id,name,amount,month};
+      fees.push(fee);
+      saveData();
+      renderFee(fee);
+      updateCounts();
+      document.getElementById('fname').value='';
+      document.getElementById('famount').value='';
+    }
+
+    function deleteFee(id){
+      if(!confirm("Are you sure to delete this fee record?")) return;
+      fees = fees.filter(f => f.id!==id);
+      saveData();
+      clearCards('fee');
+      fees.forEach(renderFee);
+      updateCounts();
+    }
+
+    async function addGallery(){
+      let files = document.getElementById('gimages').files;
+      let caption = document.getElementById('gcaption').value.trim();
+      if(!files.length){ alert('Select at least one image'); return; }
+
+      for(let i=0; i<files.length; i++){
+        let img = await fileToDataURL(files[i]);
+        let id = Date.now() + i;
+        let item = {id, img, caption, name: 'Gallery'};
+        gallery.push(item);
+        renderGallery(item);
+      }
+      saveData();
+      updateCounts();
+      document.getElementById('gimages').value='';
+      document.getElementById('gcaption').value='';
+      document.getElementById('galleryPreview').innerHTML='';
+    }
+
+    function deleteGallery(id){
+      if(!confirm("Are you sure to delete this gallery image?")) return;
+      gallery = gallery.filter(g => g.id!==id);
+      saveData();
+      clearCards('gallery');
+      gallery.forEach(renderGallery);
+      updateCounts();
+    }
+
+    function clearCards(type){
+      if(type==='student'){ document.getElementById('studentCards').innerHTML=''; document.getElementById('dashStudentCards').innerHTML=''; }
+      if(type==='teacher'){ document.getElementById('teacherCards').innerHTML=''; document.getElementById('dashTeacherCards').innerHTML=''; }
+      if(type==='fee'){ document.getElementById('feeCards').innerHTML=''; document.getElementById('dashFeeCards').innerHTML=''; }
+      if(type==='gallery'){ document.getElementById('galleryContainer').innerHTML=''; document.getElementById('dashGallery').innerHTML=''; }
+    }
+
+    function updatePrintContainer(){
+      const container = document.getElementById('printAllContainer');
+      container.innerHTML='';
+      students.forEach(s => container.appendChild(createCard(s,'student')));
+      teachers.forEach(t => container.appendChild(createCard(t,'teacher')));
+      fees.forEach(f => container.appendChild(createCard(f,'fee')));
+      gallery.forEach(g => container.appendChild(createCard(g,'gallery')));
+    }
+
+    function printAllCards(){
+      updatePrintContainer();
+      window.print();
+    }
+
+    function printGallery(){
+      const printWindow = window.open('', '', 'height=800,width=1000');
+      printWindow.document.write('<html><head><title>Gallery Print</title></head><body>');
+      gallery.forEach(g => {
+        printWindow.document.write(`<div style="display:inline-block;margin:10px;text-align:center;">
+          <img src="${g.img}" style="width:150px;height:150px;border-radius:10px;object-fit:cover;">
+          <p>${g.caption || ''}</p>
+        </div>`);
+      });
+      printWindow.document.write('</body></html>');
+      printWindow.document.close();
+      printWindow.print();
+    }
+  </script>
+</body>
+</html>
